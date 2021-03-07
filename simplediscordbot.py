@@ -10,13 +10,13 @@ import discord
 from discord.ext import commands
 import sqlite3
 
-
-TOKEN = "ODE3MDg5NTA2MjIxMDk3MDYy.YEEb5w.vZxH46phdu79ADLU2T0Zk29bTBc"
+#enter your token id
+TOKEN = "TOKEN ID"
 intents = discord.Intents.all()
 intents.reactions = True
 client = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
-
+#creates database if not already created 
 @client.event
 async def on_ready():
     db=sqlite3.connect("discord_database.sqlite")
@@ -26,9 +26,11 @@ async def on_ready():
         name TEXT NOT NULL PRIMARY KEY
         )
     ''')
-
+    #prints if bot is ready on command line
     print(f"BOT {client.user} IS ONLINE")
 
+    
+ #registers name into database
 @client.command()
 async def reg(ctx, name):
     db=sqlite3.connect("discord_database.sqlite")
@@ -50,6 +52,8 @@ async def reg(ctx, name):
         db.commit()
         await ctx.send(f"{name} has been registered")
 
+        
+ #prints all names present in database
 @client.command()
 async def names(ctx):
     db=sqlite3.connect("discord_database.sqlite")
@@ -60,7 +64,7 @@ async def names(ctx):
     for i in rows:
         await ctx.send(i)
 
-
+#help message
 @client.command()
 async def help(context):
     await context.send('''
@@ -88,28 +92,30 @@ async def help(context):
     ''')
 
 
-
+#message that is shown when a new member joins
 @client.event
 async def on_member_join(member):
-    channel = client.get_channel(816361007101771799)
+    #enter your channel id
+    channel = client.get_channel(channel id)
     await channel.send(f"WELCOME {member.name} . Enter !help to know more")
 
-
+#prints who sent reaction to whom
 @client.event
 async def on_raw_reaction_add(payload):
-    channel = client.get_channel(816361007101771799)
+    #enter your channel id
+    channel = client.get_channel(channel id)
     msg = await client.get_channel(payload.channel_id).fetch_message(payload.message_id)
     author = msg.author
     await channel.send(f"{payload.member} REACTED TO {author}'s MESSAGE")
 
 
-
+#to add role
 @client.command()
 async def add_role(ctx, role: discord.Role, user: discord.Member):
     if ctx.author.guild_permissions.administrator:
         await user.add_roles(role)
         await ctx.send(f"given role to {role.mention} to {user.mention}")
-
+#to remove role
 @client.command()
 async def remove_role(ctx, role: discord.Role, user: discord.Member):
     if ctx.author.guild_permissions.administrator:
